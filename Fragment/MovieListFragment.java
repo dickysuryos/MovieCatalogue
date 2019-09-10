@@ -1,26 +1,21 @@
 package com.example.dickysuryo.moviecatalogue.Fragment;
 
 
-import android.content.Intent;
+import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
-import com.example.dickysuryo.moviecatalogue.Adapter.ListAdapter_Movie;
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.dickysuryo.moviecatalogue.Adapter.ListAdapter_MovieNewest;
-import com.example.dickysuryo.moviecatalogue.DetailActivity;
+import com.example.dickysuryo.moviecatalogue.Constant;
 import com.example.dickysuryo.moviecatalogue.MainActivity;
-import com.example.dickysuryo.moviecatalogue.Model.DetailPopular_Model;
 import com.example.dickysuryo.moviecatalogue.Model.MovieNewest_Model;
-import com.example.dickysuryo.moviecatalogue.Model.MoviePopular_Model;
 import com.example.dickysuryo.moviecatalogue.Network.RetrofitClientInstance;
 import com.example.dickysuryo.moviecatalogue.R;
 
@@ -30,7 +25,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.support.constraint.Constraints.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +33,7 @@ public class MovieListFragment extends Fragment {
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView recycle_view;
     RetrofitClientInstance retrofitClientInstance;
-
+    LottieAnimationView animationView;
     public MovieListFragment() {
         // Required empty public constructor
     }
@@ -55,21 +49,26 @@ public class MovieListFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recycle_view.setLayoutManager(linearLayoutManager);
 
+        animationView = (LottieAnimationView)rootView.findViewById(R.id.progressAnimationView);
+        animationView.playAnimation();
 
-
-        call = retrofitClientInstance.getInstance().getApiInterface().getAllNewestMovie("");
+        call = retrofitClientInstance.getInstance().getApiInterface().getAllNewestMovie("44c09582cf533adac2fed1dccbc47c8b");
         call.enqueue(new Callback<MovieNewest_Model>() {
             @Override
             public void onResponse(Call<MovieNewest_Model> call, Response<MovieNewest_Model> response) {
                 final List<MovieNewest_Model.Result> items = response.body().getResults();
                 ListAdapter_MovieNewest customAdapter = new ListAdapter_MovieNewest(getContext(),items);
                 recycle_view.setAdapter(customAdapter);
-
+                Constant.items = items;
+                animationView.clearAnimation();
+                animationView.setScaleX(0);
+                animationView.setScaleY(0);
             }
 
             @Override
             public void onFailure(Call<MovieNewest_Model> call, Throwable t) {
                 Log.e(TAG, t.toString());
+
             }
         });
         return rootView;

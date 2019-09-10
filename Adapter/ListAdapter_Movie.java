@@ -3,15 +3,14 @@ package com.example.dickysuryo.moviecatalogue.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.dickysuryo.moviecatalogue.Constant;
 import com.example.dickysuryo.moviecatalogue.DetailActivity;
 import com.example.dickysuryo.moviecatalogue.Model.DetailPopular_Model;
@@ -23,8 +22,8 @@ public class ListAdapter_Movie extends RecyclerView.Adapter<ListAdapter_Movie.My
 {
 
     private List<DetailPopular_Model> dataList;
-    int TYPE_CONTENT_HEADER = 1;
     private Context context;
+
     public ListAdapter_Movie(Context context, List<DetailPopular_Model> dataList) {
         this.context = context;
         this.dataList = dataList;
@@ -62,6 +61,9 @@ public class ListAdapter_Movie extends RecyclerView.Adapter<ListAdapter_Movie.My
                     // display a toast with person name on item click
                     Intent intent = new Intent(context, DetailActivity.class);
                     intent.putExtra("detailMovie", (Parcelable) dataList.get(position));
+
+
+
                     context.startActivity(intent);
                 }
             });

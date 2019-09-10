@@ -1,28 +1,29 @@
 package com.example.dickysuryo.moviecatalogue.Fragment;
 
 
-import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.dickysuryo.moviecatalogue.Adapter.ListAdapter_Movie;
-import com.example.dickysuryo.moviecatalogue.DetailActivity;
+import com.example.dickysuryo.moviecatalogue.Constant;
 import com.example.dickysuryo.moviecatalogue.MainActivity;
 import com.example.dickysuryo.moviecatalogue.Model.DetailPopular_Model;
-import com.example.dickysuryo.moviecatalogue.Model.MovieNewest_Model;
 import com.example.dickysuryo.moviecatalogue.Model.MoviePopular_Model;
 import com.example.dickysuryo.moviecatalogue.Network.RetrofitClientInstance;
 import com.example.dickysuryo.moviecatalogue.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -36,30 +37,53 @@ public class MoviePopularFragment extends Fragment {
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView recycle_view;
     RetrofitClientInstance retrofitClientInstance;
-
+    LottieAnimationView animationView;
+    LinearLayoutManager linearLayoutManager;
+    Parcelable list;
+    List<DetailPopular_Model> items;
+    Call<MoviePopular_Model> call;
     public MoviePopularFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(Constant.KEY_LIST_POPULAR, (ArrayList<? extends Parcelable>) items);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
                 // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_movie_popular, container, false);
-        Call<MoviePopular_Model> call;
-
         recycle_view = (RecyclerView) rootView.findViewById(R.id.recycle_view);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+         linearLayoutManager = new LinearLayoutManager(getContext());
         recycle_view.setLayoutManager(linearLayoutManager);
+        animationView = (LottieAnimationView)rootView.findViewById(R.id.progressAnimationView);
+        animationView.clearAnimation();
+        animationView.setScaleX(0);
+        animationView.setScaleY(0);
+         fetch_data();
 
-        call = retrofitClientInstance.getInstance().getApiInterface().getAllPopularMovie("");
+
+
+        return rootView;
+    }
+
+
+    public void fetch_data(){
+        call = retrofitClientInstance.getInstance().getApiInterface().getAllPopularMovie("44c09582cf533adac2fed1dccbc47c8b");
         call.enqueue(new Callback<MoviePopular_Model>() {
             @Override
             public void onResponse(Call<MoviePopular_Model> call, Response<MoviePopular_Model> response) {
-                final List<DetailPopular_Model> items = response.body().getResults();
+                 items = response.body().getResults();
                 ListAdapter_Movie customAdapter = new ListAdapter_Movie(getContext(),items);
+
                 recycle_view.setAdapter(customAdapter);
+                animationView.clearAnimation();
+                animationView.setScaleX(0);
+                animationView.setScaleY(0);
             }
 
             @Override
@@ -67,6 +91,5 @@ public class MoviePopularFragment extends Fragment {
                 Log.e(TAG, t.toString());
             }
         });
-        return rootView;
     }
 }

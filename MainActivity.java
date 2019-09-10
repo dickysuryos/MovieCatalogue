@@ -6,9 +6,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.tabs.TabLayout;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -31,8 +31,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         viewPager = (ViewPager) findViewById(R.id.pager);
-        setupViewPager(viewPager);
+      setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+
         tabLayout.setupWithViewPager(viewPager);
     }
 
@@ -41,6 +42,14 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new MovieListFragment(),getResources().getString(R.string.TAB_TV_SHOW));
         adapter.addFragment(new MoviePopularFragment(), getResources().getString(R.string.TAB_TERPOPULER));
         viewPager.setAdapter(adapter);
+
+    }
+    private void loadViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment((MovieListFragment)getSupportFragmentManager().findFragmentByTag("newest"),getResources().getString(R.string.TAB_TV_SHOW));
+        adapter.addFragment((MoviePopularFragment)getSupportFragmentManager().findFragmentByTag("popular"), getResources().getString(R.string.TAB_TERPOPULER));
+        viewPager.setAdapter(adapter);
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
